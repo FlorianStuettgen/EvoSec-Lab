@@ -29,7 +29,8 @@ This repository documents the physical layout, logical design, security model, a
 
 The environment is built into a rack with structured cabling, patch panels, and out-of-band access.
 
-### Core Hardware
+
+  ### Core Hardware
 
 - **Computing**
   - Dell PowerEdge R710
