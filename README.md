@@ -1,138 +1,102 @@
 # Digital Fortress Lab
 
-**Digital Fortress Lab** is a self-hosted security lab built on enterprise hardware and operated as a small production-style environment.  
-It combines Proxmox virtualization, Dell storage, Cisco ASA and SonicWall firewalls, VLAN segmentation, deep packet inspection, and a Suricata/SELKS SOC node into a single, coherent platform for network and security engineering work.
+Digital Fortress Lab is my self-hosted security environment, built on enterprise hardware and operated deliberately like a small production network rather than a casual homelab. It brings together Proxmox virtualization, Dell storage, Cisco ASA and SonicWall firewalls, VLAN-based segmentation, deep packet inspection, and a Suricata/SELKS SOC node into a single, coherent platform for infrastructure and security engineering work.
 
 ---
 
-## 1. Purpose and Scope
+## Overview
 
-The lab is designed to behave like a compact enterprise network rather than a casual homelab. It provides a controlled environment to:
+This project started from a simple goal: have a place where I can experiment with realistic infrastructure without breaking anything that matters. Over time, it evolved into something closer to a compact enterprise lab.
 
-- Run virtualized workloads on realistic hardware
-- Design and refine network segmentation and firewall policies
-- Collect and inspect traffic with IDS/IPS and centralized logging
-- Practice backup, recovery, and change management procedures
+The rack now includes:
 
-This repository holds the **documentation, diagrams, and sanitized configuration examples** that describe how the environment is assembled and operated. It does *not* contain live secrets or full device configurations.
+- A Dell PowerEdge R710 as the main Proxmox host, with enough CPU and memory headroom to run realistic multi-VM scenarios.
+- A pair of Dell EqualLogic FS7610 nodes and an Avid 18-bay storage chassis providing shared and bulk storage for virtual machines and data.
+- A Dell X1052P managed switch, dual shielded patch panels, an OpenGear console manager, and a rackmount KVM for clean switching, structured cabling, and centralized out-of-band access.
+- A Panasonic Toughbook CF-30 running NST/SELKS as a log sink, Suricata sensor, and SOC-style analysis console.
 
----
-
-## 2. Physical Platform
-
-The lab is built into a rack with structured cabling and out‑of‑band access, so that every device can be serviced without rearranging hardware.
-
-### 2.1 Core Hardware
-
-| Layer        | Components                                                                                | Role                                                         |
-|-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------|
-| Compute     | Dell PowerEdge R710 (dual Xeon, 128 GB RAM), Dell EqualLogic FS7610 (2 nodes)               | Primary Proxmox host and additional compute/storage services |
-| Storage     | Avid 18‑bay chassis populated with mixed SAS/SATA drives; EqualLogic‑backed storage       | Bulk storage and shared storage pools                        |
-| Network     | Dell X1052P 52‑port switch; dual shielded Cat6 patch panels; OpenGear console manager;    | Core switching, structured cabling, and OOB serial access    |
-|             | StarTech rack KVM and HP TFT5600 console                                                  | Local VGA/USB access for management                          |
-| Security    | Cisco ASA 5510 / 5515‑X firewalls; SonicWall SRA 4200                                      | Perimeter firewalls and SSL VPN remote‑access gateway        |
-| Monitoring  | Panasonic Toughbook CF‑30 running NST/SELKS with Suricata                                  | Log sink and IDS/IPS SOC dashboard                           |
-
-### 2.2 Rack Philosophy
-
-The rack is wired so that:
-
-- All copper links pass through the patch panels into the core switch, keeping cabling predictable and serviceable.
-- Management ports are aggregated on the console manager, with local VGA/USB access via the rack KVM and console.
-- Power and data cabling are separated for easier maintenance and troubleshooting.
+The goal is not just to power on hardware but to design and operate the environment as if it were a small, self-contained production network.
 
 ---
 
-## 3. Logical Architecture
+## Network & Segmentation
 
-At a high level, the lab is split into distinct network zones, each mapped to its own VLAN and enforced by firewall policy.  
-Inter‑VLAN routing is handled by the firewalls; the core switch provides Layer‑2 segmentation and mirroring for DPI.
+The environment is intentionally segmented to mirror a compact enterprise design. Management, core services, DMZ, lab workloads, honeypots, and guest devices each live on their own VLANs.
 
-### 3.1 Network Zones (Sanitized Overview)
+- The core switch provides Layer 2 separation.
+- Inter-VLAN routing and policy enforcement are handled by the firewalls.
+- Administrative interfaces are reachable exclusively from the management network.
 
-| Zone        | Example VLAN ID | Role / Typical Hosts                           |
-|------------|------------------|------------------------------------------------|
-| Management | 10               | Switch, firewalls, console manager, iDRAC, SOC |
-| Core       | 20               | Proxmox nodes, storage, shared services        |
-| DMZ        | 30               | Public‑facing lab services                     |
-| Lab        | 40               | General workloads, test VMs                    |
-| Honeypots  | 50               | Intentionally exposed services                 |
-| Guest      | 60               | Untrusted devices and Wi‑Fi clients           |
+In broad strokes:
 
-> **Note:** VLAN IDs and IP ranges above are examples only and do not reflect the exact addressing scheme in use.
+- **Cisco ASA appliances** provide perimeter firewalling, NAT, and site-to-site or remote-access capabilities.
+- **SonicWall SRA 4200** focuses on SSL VPN and remote access into the lab for administrative purposes.
+- **Traffic between zones** is allowed only where it is explicitly needed, with defaults leaning toward deny + log.
 
-### 3.2 Traffic Flow (Conceptual)
-
-Typical flows include:
-
-- **Internet ↔ ASA/SonicWall ↔ DMZ services** – For testing externally reachable services and VPN access.
-- **Lab/Guest ↔ ASA ↔ Internet** – Outbound access is restricted and logged; selected traffic is mirrored to Suricata.
-- **Honeypots ↔ ASA ↔ Internet** – Tight outbound controls with full monitoring of inbound scans and attacks.
-- **Management ↔ All zones (controlled)** – Administrative access is limited to specific management endpoints and protocols.
-
-An accompanying diagram in `diagrams/logical-network-diagram.png` illustrates how these zones connect through the firewall and core switch.
+This makes the lab a useful place to reason about real-world constraints: who should talk to whom, over what ports, and under which conditions.
 
 ---
 
-## 4. Security and Monitoring Design
+## Security, Monitoring & Honeypots
 
-### 4.1 Perimeter and Segmentation
+Security and observability are treated as first-class design concerns rather than add-ons.
 
-- **Cisco ASA 5510 / 5515‑X** provide firewalling, NAT, and site‑to‑site/VPN functions.
-- **SonicWall SRA 4200** terminates remote user VPN sessions.
-- VLANs on the core switch implement basic separation of zones; ASA policies define which flows are permitted between them.
-- Management interfaces are only reachable from the Management zone.
+The SOC node:
 
-### 4.2 Deep Packet Inspection and Logging
+- Ingests **firewall logs**, **host logs**, and **selected mirrored traffic** from the core switch and key firewall interfaces.
+- Runs **Suricata** and the **SELKS stack** to provide visibility into what is happening on the wire.
+- Acts as a place to tune detection rules and thresholds using real lab traffic.
 
-- The Toughbook CF‑30 runs NST/SELKS with Suricata for deep packet inspection and alerting.
-- Select traffic is mirrored from the core switch and firewall into Suricata, following the principle of inspecting important flows **once** rather than duplicating them.
-- Log sources include firewalls (connection logs, VPN events), Proxmox and core services, honeypot and DMZ hosts, and network devices where useful.
+Design principles:
 
-Design considerations aim to balance coverage and efficiency: critical paths are inspected at well‑chosen points, and logs are centralized for correlation and investigation.
+- Important flows are mirrored and inspected at a **small number of well-chosen points** to avoid redundant processing and unnecessary complexity.
+- A dedicated **honeypot zone** can be selectively exposed through the ASA to observe scan and attack patterns without risking production systems.
+- Outbound traffic from honeypots and lab workloads is **tightly scoped and logged** to prevent unintended pivoting or abuse.
 
-### 4.3 Honeypots and Exposure
-
-A dedicated Honeypots zone exists for intentionally exposed services:
-
-- Hosts in this zone can be selectively exposed through the ASA to the Internet.
-- Outbound traffic from Honeypots is tightly controlled to prevent unintended pivoting.
-- All Honeypot activity is logged and, where feasible, mirrored to Suricata for inspection.
-
-The goal is to study scan and attack patterns in a controlled way, not to participate in abusive activity. The environment is designed to avoid unintended impact on networks outside the lab.
+The result is an environment where experimentation with exposure, detection, and response can happen with guardrails in place.
 
 ---
 
-## 5. Operations and Procedures
+## How This Repository Is Organized
 
-Even though this repository omits live secrets and full device configurations, it reflects the operational structure used to keep the lab maintainable:
+This repository documents how the lab is assembled and how it is operated. It is structured so that someone who has never seen the physical rack can still understand the environment and reason about changes.
 
-- **Configuration capture and backup** – Regular exports of sanitized device configurations and Proxmox backups are taken; secrets are stored offline.
-- **Change logging** – Topology changes, new VLANs, firewall rule adjustments, and service deployments are noted in `runbooks/change-log.md` to keep design and implementation aligned.
-- **Recovery drills** – Restoration of virtual machines, recreation of firewall rules from documentation, and verification that logging and Suricata restart cleanly after maintenance.
+- `docs/` – High-level overview, hardware inventory, network and security architecture, services, operations, and future roadmap.
+- `diagrams/` – Logical network diagram tying together zones, firewalls, and the core switch.
+- `infra/` – Sanitized examples of an ASA base policy and placeholders for scripts or infrastructure-as-code concepts.
+- `runbooks/` – Operational notes such as change history and, over time, backup and restore procedures.
+- `assets/` – Space reserved for redacted photos of the rack and equipment.
 
-Detailed runbooks live in the `runbooks/` folder; they provide step‑by‑step procedures that can be followed by someone other than the original builder.
-
----
-
-## 6. Repository Layout
-
-The documentation and examples are organized as follows:
-
-- `docs/` – Markdown documentation covering the overall narrative, hardware inventory, network and security architecture, service mapping, operations, and future roadmap.
-- `diagrams/` – Visuals such as rack layouts, the logical network diagram, and other supplemental flowcharts.
-- `infra/` – Sanitized technical examples, including example firewall policies, conceptual Ansible snippets, and utility scripts.
-- `runbooks/` – Operational procedures such as backup/restore steps, incident response workflows, and change logs.
-- `assets/photos/` – Redacted photos of the rack and environment, with identifying details avoided or blurred.
-
-This structure makes it easy for a visitor to move from high‑level architecture down to specific examples without needing access to the physical rack.
+The intent is that the documentation and structure make it possible to reconstruct the design and understand the reasoning behind it, not just the final state.
 
 ---
 
-## 7. Sanitization and Ethics
+## Why This Lab Matters
 
-All IP addresses, hostnames, keys, credentials, and VPN details in this repository are **sanitized examples only**. Real secrets and identifying data are stored offline and are never committed to Git.
+Digital Fortress Lab is more than a collection of hardware; it is a long-running practice ground for infrastructure and security work.
 
-The lab is strictly for personal education and experimentation. It is isolated from production or customer systems. Any traffic analysis, IDS/IPS tuning, or honeypot activity is conducted within legal and ethical boundaries, and the environment is designed to avoid impacting networks outside the lab.
+Treating this environment like a small production network forces discipline:
+
+- Changes are deliberate and recorded.
+- Configuration is backed up and can be rebuilt.
+- Design decisions are documented in version control instead of living only in memory.
+
+The lab gives me a place to:
+
+- Design around real constraints and trade-offs.
+- Work through the balance between simplicity and flexibility.
+- Practice habits that translate directly to professional environments: clear boundaries between zones, documented data flows, thoughtful placement of security controls, and observability built in from the beginning.
 
 ---
+
+## Sanitization & Scope
+
+All information in this repository is intentionally sanitized:
+
+- IP ranges, hostnames, and object names are examples rather than live values.
+- No keys, credentials, or VPN details are committed here.
+- The lab is isolated from production or customer systems and is used strictly for personal education and experimentation.
+
+Honeypot and exposure scenarios are designed to provide useful data without creating collateral risk.
+
+In short, Digital Fortress Lab functions as both a **learning platform** and a **portfolio artifact**. It captures how I approach infrastructure and security in practice: start from clear boundaries, design the network as a system, build in observability from the start, and document enough that the environment can be understood, modified, and rebuilt by someone else.
