@@ -45,7 +45,7 @@ The environment is built into a rack with structured cabling, patch panels, and 
      ![18-bay chassis](/assets/photos/Storage1.png)
     
   - EqualLogic-backed storage presented to Proxmox and other services
-    ![backed storage presented to Proxmox and other services](/assets/photos/Storage2.jpg)
+    ![backed storage presented to Proxmox and other services](/assets/photos/Storage2.png)
     
 - **Network & Management**
   - Dell X1052P 52-port managed switch – core switching and VLAN hub
