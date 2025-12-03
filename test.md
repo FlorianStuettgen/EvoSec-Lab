@@ -11,19 +11,17 @@
   <img src="https://img.shields.io/badge/Nerd_Factor-11/10-ff0066?style=flat&logo=dependabot&logoColor=white" alt="Nerd Factor"/>
 </div>
 
-<details open>
 <summary><strong>Introduction</strong></summary>
 
 This repository details the architecture, implementation, and management of a dedicated digital infrastructure laboratory. Built on genuine enterprise hardware, it provides a secure, isolated environment for designing, testing, and refining network topologies, security measures, and operational frameworks.
 
-</details>
-
+<details open>
 > [!IMPORTANT]  
 > Engineered with production-level standards on authentic hardware, accompanied by exhaustive documentation to support professional development and portfolio enhancement.
 
 > [!NOTE]  
 > Operated in complete isolation from production environments to enable risk-free experimentation with realistic scenarios.
-
+</details>
 ## At a Glance — Current as of December 2025
 
 <div align="center">
