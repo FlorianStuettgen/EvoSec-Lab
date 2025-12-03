@@ -27,14 +27,15 @@ This repository details the architecture, implementation, and management of a de
 ## At a Glance — Current as of December 2025
 
 <div align="center" style="margin-bottom: 24px; font-style: italic; color: #555; font-size: 0.9em;">
-  Overview of key lab components, specifications, and operational status.
+  Expanded overview of lab components, including detailed specifications, roles, and operational status for a comprehensive snapshot.
 </div>
 
-<table style="width: 100%; max-width: 900px; margin: 0 auto; border-collapse: separate; border-spacing: 0 10px; font-family: Arial, sans-serif;">
+<table style="width: 100%; max-width: 1200px; margin: 0 auto; border-collapse: separate; border-spacing: 0 12px; font-family: Arial, sans-serif;">
   <thead>
     <tr style="background-color: #f0f4f8; color: #333;">
       <th style="padding: 12px 16px; text-align: left; border-radius: 6px 0 0 6px; font-weight: 600;">Component</th>
       <th style="padding: 12px 16px; text-align: left; font-weight: 600;">Specification</th>
+      <th style="padding: 12px 16px; text-align: left; font-weight: 600;">Description</th>
       <th style="padding: 12px 16px; text-align: left; border-radius: 0 6px 6px 0; font-weight: 600;">Status</th>
     </tr>
   </thead>
@@ -42,50 +43,57 @@ This repository details the architecture, implementation, and management of a de
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
       <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">Hypervisor</td>
       <td style="padding: 12px 16px;">Proxmox VE on Dell R710 (128 GB RAM, dual Xeon)</td>
+      <td style="padding: 12px 16px;">Serves as the foundational virtualization platform, enabling efficient VM and container management with high resource utilization and failover capabilities.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-Stable-brightgreen?style=flat-square" alt="Stable"/>
+        <img src="https://img.shields.io/badge/Status-Operational%20and%20Stable-brightgreen?style=flat-square" alt="Operational and Stable"/>
       </td>
     </tr>
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
       <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">Storage</td>
       <td style="padding: 12px 16px;">Dual EqualLogic FS7610 + Avid 18-bay chassis</td>
+      <td style="padding: 12px 16px;">Provides scalable, high-performance NAS storage with RAID redundancy, supporting iSCSI and NFS protocols for seamless data access across the lab.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-Redundant-brightgreen?style=flat-square" alt="Redundant"/>
+        <img src="https://img.shields.io/badge/Status-Fully%20Redundant-brightgreen?style=flat-square" alt="Fully Redundant"/>
       </td>
     </tr>
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
       <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">Core Switch</td>
       <td style="padding: 12px 16px;">Dell X1052P — 52-port, full VLAN trunking</td>
+      <td style="padding: 12px 16px;">Acts as the central Layer 2 switch, handling VLAN segmentation, PoE for devices, and high-throughput traffic management in the lab's network core.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-L2%20Master-brightgreen?style=flat-square" alt="L2 Master"/>
+        <img src="https://img.shields.io/badge/Status-L2%20Master%20Operational-brightgreen?style=flat-square" alt="L2 Master Operational"/>
       </td>
     </tr>
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
       <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">Perimeter</td>
       <td style="padding: 12px 16px;">Cisco ASA 5510/5515-X + SonicWall SRA 4200</td>
+      <td style="padding: 12px 16px;">Forms the security boundary with adaptive firewalling, VPN support, and intrusion prevention, ensuring controlled access and threat mitigation.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-Hardened-brightgreen?style=flat-square" alt="Hardened"/>
+        <img src="https://img.shields.io/badge/Status-Hardened%20and%20Secure-brightgreen?style=flat-square" alt="Hardened and Secure"/>
       </td>
     </tr>
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
       <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">SOC Node</td>
       <td style="padding: 12px 16px;">Panasonic Toughbook → NST/SELKS + Suricata</td>
+      <td style="padding: 12px 16px;">Dedicated security operations center node for real-time monitoring, ELK stack integration, and IDS/IPS via Suricata for deep packet analysis.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-Live%20DPI-brightgreen?style=flat-square" alt="Live DPI"/>
+        <img src="https://img.shields.io/badge/Status-Live%20DPI%20Active-brightgreen?style=flat-square" alt="Live DPI Active"/>
       </td>
     </tr>
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
       <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">Network Model</td>
       <td style="padding: 12px 16px;">Multi-zone, ASA-only L3 routing</td>
+      <td style="padding: 12px 16px;">Implements a segmented, zero-trust architecture with Layer 3 routing confined to ASA devices, promoting least-privilege access and isolation.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-Zero%20Trust%E2%80%93inspired-brightgreen?style=flat-square" alt="Zero Trust–inspired"/>
+        <img src="https://img.shields.io/badge/Status-Zero%20Trust%20Enforced-brightgreen?style=flat-square" alt="Zero Trust Enforced"/>
       </td>
     </tr>
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
       <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">OOB Management</td>
       <td style="padding: 12px 16px;">OpenGear CM4148 + rack KVM + HP TFT5600</td>
+      <td style="padding: 12px 16px;">Out-of-band management console for remote access, serial console switching, and KVM-over-IP, ensuring accessibility during network outages.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-Always%20reachable-brightgreen?style=flat-square" alt="Always reachable"/>
+        <img src="https://img.shields.io/badge/Status-Always%20Accessible-brightgreen?style=flat-square" alt="Always Accessible"/>
       </td>
     </tr>
   </tbody>
@@ -117,7 +125,6 @@ graph LR
     style Core Infrastructure fill:#f0f8ff,stroke:#007bff,stroke-width:2px,stroke-dasharray: 5 5
     style Networking & Security fill:#f0f8ff,stroke:#007bff,stroke-width:2px,stroke-dasharray: 5 5
     style Management fill:#f0f8ff,stroke:#007bff,stroke-width:2px,stroke-dasharray: 5 5
-
 
 
 
