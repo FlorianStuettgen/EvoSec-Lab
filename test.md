@@ -19,9 +19,9 @@
 ---
 
 <h2 align="center"><strong>What is this?</strong></h2>
+<div align="left">
 
-
-**EvoSec-Lab** is an isolated design and testing environment for **Network Topologies**, **Security Measures** & **Project Controls Workflows**.  
+**EvoSec-Lab** is an isolated design and testing build for **Network Topologies**, **Security Measures** & **Project Controls Workflows**.  
 
 **Enterprise-grade hardware**, **Complex network topologies**, & **Robust workflows** integrated seamlessly.  
 
@@ -29,34 +29,37 @@ This lab serves as a **hands-on playground for experimentation, learning, and pr
 
 ---
 
-<div align="left">
-  
-### 🔹 Key Highlights
+<h3 align="center"><strong>🔹 Key Highlights</strong></h2>
 
-</div>
-
-**Enterprise-Grade Simulation**  
+<details open>
+<summary>Enterprise-Grade Simulation</summary>
 Realistic network environments featuring racks, switches, and firewalls designed to mirror production-grade infrastructures.
+</details>
 
-**Security Experimentation**  
-Controlled deployment of honeypots, tar pits, and monitoring systems for safe and practical security research.
-
-**Automation & Orchestration**  
-Integration of scripts and SaltStack to dynamically manage infrastructure and maintain operational consistency.
-
-**Project Controls Workflows**  
+<details open>
+<summary>Project Controls Workflows</summary>
 Structured processes for planning, monitoring, and managing complex IT and network operations.
+</details>
 
-**Isolated Testing Environment**  
+<details open>
+<summary>Security Experimentation</summary>
+Controlled deployment of honeypots, tar pits, and monitoring systems for safe and practical security research.
+</details>
+
+<details open>
+<summary>Automation & Orchestration</summary>
+Integration of scripts and SaltStack to dynamically manage infrastructure and maintain operational consistency.
+</details>
+
+<details open>
+<summary>Isolated Testing Environment</summary>
 A fully contained lab that enables risk-free experimentation without any impact on live systems.
+</details>
 
-**Thorough Documentation**  
+<details open>
+<summary>Thorough Documentation</summary>
 Detailed notes, diagrams, and procedures ensuring all setups are transparent, reproducible, and verifiable.
-
-
-
-
-
+</details>
 
 ## At a Glance — Current as of December 2025
 
