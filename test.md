@@ -1,8 +1,8 @@
 <h1 align="center"><strong>EvoSec-Lab</strong></h1>
 <div align="center">
-  <img src="/assets/photos/test2.jpeg" alt="Enterprise Rack Configuration" width="85%" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
+  <img src="/assets/photos/test2.jpeg" alt="Enterprise Rack Configuration" width="60%" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"/>
 </div>
-<div align="center" style="margin-top: 16px;">
+<div align="left" style="margin-top: 16px;">
   <img src="https://img.shields.io/badge/Status:-Active-brightgreen?style=for-the-badge&logo=proxmox&logoColor=white" alt="Lab Status: Active"/>
   <img src="https://img.shields.io/badge/Built:-Solo-blue?style=for-the-badge&logo=github&logoColor=white" alt="Build finished"/>
   <img src="https://img.shields.io/badge/Nerd_Factor:-11/10-pink?style=for-the-badge&logo=dependabot&logoColor=white" alt="Nerd Factor"/>
@@ -11,14 +11,15 @@
 </div>
 
 > [!NOTE]  
-> Engineered with production-level standards and documentation on authentic enterprise-grade hardware.  
+>Engineered with production-level standards and documentation on authentic enterprise-grade hardware.  
 
 > [!IMPORTANT]  
-> Data sanitized. Sensitive information, credentials, or real network details are **obfuscated or excluded** to maintain OPSEC.
+>Data sanitized. Sensitive information, credentials, or real network details are **obfuscated or excluded**.
 
 ---
 
 <h2 align="center"><strong>What is this?</strong></h2>
+
 
 **EvoSec-Lab** is an isolated design and testing environment for **Network Topologies**, **Security Measures** & **Project Controls Workflows**.  
 
