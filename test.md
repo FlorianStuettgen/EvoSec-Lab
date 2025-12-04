@@ -21,7 +21,7 @@
 <h2 align="left"><strong>What is this?</strong></h2>
 <div align="left">
 
-**EvoSec-Lab** is an isolated design and testing build for Network Topologies, Security Measures & **Project Controls Workflows**.  
+**EvoSec-Lab** is an isolated design and testing orchestration stage for Network Topologies, Security Measures & **Project Controls Workflows**.  
 
 Enterprise-grade hardware, **Complex** network topologies, & Robust workflows integrated seamlessly.  
 
@@ -29,42 +29,32 @@ This lab serves as a hands-on playground for experimentation, learning, and proo
 
 ---
 
-<h2 align="left"><strong>Key Highlights:</strong></h2>
-<details open>
-<summary>Enterprise-Grade Simulation</summary>
-Realistic network environments featuring racks, switches, and firewalls designed to mirror production-grade infrastructures.
-</details>
+<h3 align="left"><strong>Key Highlights:</strong></h3>
 
-<details open>
-<summary>Project Controls Workflows</summary>
-Structured processes for planning, monitoring, and managing complex IT and network operations.
-</details>
+- **Enterprise-Grade Simulation**  
+  Realistic network environments featuring racks, switches, and firewalls designed to mirror production-grade infrastructures.
 
-<details open>
-<summary>Security Experimentation</summary>
-Controlled deployment of honeypots, tar pits, and monitoring systems for safe and practical security research.
-</details>
+- **Project Controls Workflows**  
+  Structured processes for planning, monitoring, and managing complex IT and network operations.
 
-<details open>
-<summary>Automation & Orchestration</summary>
-Integration of scripts and SaltStack to dynamically manage infrastructure and maintain operational consistency.
-</details>
+- **Security Experimentation**  
+  Controlled deployment of honeypots, tar pits, and monitoring systems for safe and practical security research.
 
-<details open>
-<summary>Isolated Testing Environment</summary>
-A fully contained lab that enables risk-free experimentation without any impact on live systems.
-</details>
+- **Automation & Orchestration**  
+  Integration of LLM and SaltStack to dynamically manage infrastructure and maintain operational consistency.
 
-<details open>
-<summary>Thorough Documentation</summary>
-Detailed notes, diagrams, and procedures ensuring all setups are transparent, reproducible, and verifiable.
-</details>
+- **Isolated Testing Environment**  
+  A fully contained lab that enables risk-free experimentation without any impact on live systems.
+
+- **Thorough Documentation**  
+  Detailed notes, diagrams, and procedures ensuring all setups are transparent, reproducible, and verifiable.
+
 
 ## At a Glance — Current as of December 2025
 
-<details open>
+<details>
 <summary><div align="center" style="margin-bottom: 24px; font-style: italic; color: #555; font-size: 0.9em;">
-  Overview of lab components, including specifications, roles, and operational status for a snapshot.
+  Expand to see an overview of lab components, including specifications, roles, and operational status for a snapshot.
 </summary>
 <table style="width: 100%; max-width: 1200px; margin: 0 auto; border-collapse: separate; border-spacing: 0 12px; font-family: Arial, sans-serif;">
   <thead>
@@ -137,19 +127,17 @@ Detailed notes, diagrams, and procedures ensuring all setups are transparent, re
 </details>
 </div>
 
-  
-<div align="left" style="margin-bottom: 24px; font-style: italic; color: #555; font-size: 0.9em;">
-<details>
-<summary>With full operational maturity, the lab now operates as a dynamic, self-regulating security environment. The interplay here is complex, but charted here is a naive approach:</summary>
-</div>
+<h3 align="left"><strong>With full operational maturity, the lab now operates as a dynamic, self-regulating security environment.</strong></h2>
 
-<div align="center">
+The interplay here is complex, but charted here is a naive approach:
+
+<div align="left">
   <img src="https://github.com/FlorianStuettgen/digital-infrastructure-lab/blob/main/assets/photos/diagram.svg" alt="System Diagram" width="1000"/>
-  <p><i>Full system architecture showing compute, storage, and network topology. Application VMs run critical services on isolated VLANs, while honeypots and tar pits detect and slow threats. SaltStack orchestrates real-time network adjustments, moving VMs and activating traps as needed, while LLM-driven analytics react to the logs to anticipate attacks and dynamically adjust the network topology.</i></p>
+  <p><i>
+  System architecture showing compute, storage, and network topology. Application VMs run critical services on isolated VLANs, while honeypots and tar pits detect and slow threats. SaltStack orchestrates real-time network adjustments, moving VMs and
+  activating traps as needed. 
+  LLM-driven analytics are reacting to the logs, anticipating attacks, and dynamically adjusting the network topology.</i></p>
 </div>
-
-</details>
-
 
 
 
