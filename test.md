@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/Status:-Active-brightgreen?style=for-the-badge&logo=proxmox&logoColor=white" alt="Lab Status: Active"/>
   <img src="https://img.shields.io/badge/Built:-Solo-blue?style=for-the-badge&logo=github&logoColor=white" alt="Build finished"/>
   <img src="https://img.shields.io/badge/Docs:-Comprehensive-orange?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Comprehensive Documentation"/>
-  <img src="https://img.shields.io/badge/Nerd_Factor-11/10-pink?style=for-the-badge&logo=dependabot&logoColor=white" alt="Nerd Factor"/>
+  <img src="https://img.shields.io/badge/Nerd_Factor:-11/10-pink?style=for-the-badge&logo=dependabot&logoColor=white" alt="Nerd Factor"/>
   <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge&logo=github&logoColor=white" alt="MIT License"/>
 </div>
 
