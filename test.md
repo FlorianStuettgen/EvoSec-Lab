@@ -1,4 +1,4 @@
-<h1 align="center"><strong>Key Highlights</strong></h1>
+<h1 align="center"><strong>EvoSec-Lab</strong></h1>
 
 
 <div align="center">
