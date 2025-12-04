@@ -26,11 +26,12 @@ This lab serves as a **hands-on playground for experimentation, learning, and pr
 
 ### 🔹 Key Highlights
 
-- **Enterprise-Grade Simulation:** Test real-world network setups with racks, switches, firewalls, and more.  
-- **Security-Oriented:** Honeypots, tar pits, and monitoring for safe security experimentation.  
-- **Automation & Orchestration:** Integrated with scripts and SaltStack to dynamically control infrastructure.  
-- **Risk-Free Environment:** Operates in complete isolation, preventing any impact on production systems.  
-- **Comprehensive Documentation:** Full notes and diagrams for replicable experiments.  
+- **Enterprise-Grade Simulation:** Realistic network environments with racks, switches, and firewalls, designed to reflect production-grade infrastructures.  
+- **Security Experimentation:** Controlled deployment of honeypots, tar pits, and monitoring systems for safe, practical security research.  
+- **Automation & Orchestration:** Integration of scripts and SaltStack to manage infrastructure dynamically and maintain operational consistency.  
+- **Project Controls Workflows:** Demonstrates structured processes for planning, monitoring, and managing complex IT and network operations.  
+- **Isolated Testing Environment:** Fully contained lab that allows risk-free experimentation without affecting live systems.  
+- **Thorough Documentation:** Detailed notes, diagrams, and procedures ensure setups are transparent, reproducible, and verifiable.
 
 ---
 
