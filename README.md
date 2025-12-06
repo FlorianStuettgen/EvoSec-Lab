@@ -1,391 +1,122 @@
-# EvoSec-Lab
-![](/assets/photos/test2.jpeg)
-
-**EvoSec-Lab** is a fully matured, adaptive security environment designed to model advanced threat detection and response in a controlled, production-like setting. Application VMs run critical services on isolated VLANs, while honeypots and tar pits actively attract and analyze potential threats. SaltStack automates network reconfiguration, shifting VMs and activating traps in real time, while storage telemetry feeds an LLM-driven security engine for intelligent threat anticipation. Zero Trust policies, robust perimeter defenses, and continuous monitoring ensure that the lab remains resilient, segmented, and fully auditable.
-
-> [!NOTE]
-> ### In This Project:
-> - The design and operation of a segmented, enterprise-style network on Proxmox and legacy enterprise gear.  
-> - Implementation of ASA/SonicWall firewalls, VPNs, IDS/IPS (Suricata/SELKS), and central logging.  
-> - Documentation of architectures, runbooks, and change management.
->   
-I use this lab to prototype security, monitoring, and operations ideas that I later bring into my professional work.
-
-It combines:
-
- - Proxmox virtualization
- - Dell server and storage platforms
- - Cisco ASA and SonicWall security appliances
- - VLAN-based segmentation on a managed switch
- - Centralized logging and IDS/IPS with NST/SELKS and Suricata
-
-The lab is isolated from production networks and is used to design, test, and operate realistic network and security topologies.
+<div align="left">
+<img width="452" height="170" alt="ChatGPT Image Dec 5, 2025, 05_22_47 PM" src="https://github.com/user-attachments/assets/c35d9192-3736-40ba-9d59-d2660507c0c2" />
+</div> 
 
 ---
 
-## 📌 Quick Facts
+##  Welcome to EvoSec
 
-| Item             | Description                                                     |
-|------------------|-----------------------------------------------------------------|
-| Environment type | Self-hosted, isolated security & infrastructure lab            |
-| Core hypervisor  | Proxmox VE on Dell PowerEdge R710                               |
-| Storage          | EqualLogic FS7610 (2 nodes) + Avid 18-bay storage chassis       |
-| Switching        | Dell X1052P managed switch + dual shielded patch panels         |
-| Perimeter        | Cisco ASA 5510 / 5515-X + SonicWall SRA 4200                    |
-| Monitoring       | Panasonic Toughbook CF-30 running NST/SELKS + Suricata          |
-| Network model    | Multi-VLAN, zone-based segmentation with ASA as L3 boundary     |
+EvoSec is a cybersecurity research lab designed for experimentation and operational analysis. The platform brings together honeypots, intrusion detection, automation, and monitoring into a unified environment, enabling practical testing and innovation. 
+
+This wiki provides an overview of EvoSec’s architecture, components, and applications.
 
 ---
 
-## 🗺️ Table of Contents
+##  Key Features 
 
-- [Purpose](#-purpose)
-- [Physical Platform](#-physical-platform)
-  - [Core Hardware Summary](#core-hardware-summary)
-  - [Hardware Gallery](#hardware-gallery)
-- [Logical Architecture](#-logical-architecture)
-  - [Zones](#zones-sanitized)
-  - [Traffic Flows](#traffic-flows-conceptual)
-  - [Addressing Approach](#addressing-approach-sanitized)
-- [Security & Monitoring](#-security--monitoring)
-- [Repository Layout](#-repository-layout)
-- [Relevance to Roles](#-relevance-to-roles)
-- [Operations Model](#-operations)
-- [My Role in This Project](#-my-role-in-this-project)
-- [Sanitization & Scope](#-sanitization--scope)
+| Feature | Description |
+|:------:|:-----------|
+| **Enterprise-Grade Infrastructure** | High-performance servers, storage, and networking provide a professional-grade lab for advanced research and experimentation. |
+| **Segregated Lab Zones** | VLANs create isolated spaces for honeypots, tar pits, DMZs, and management networks, enabling safe and flexible testing. |
+| **AI-Driven Automation** | Large language models orchestrate network, security, and lab operations in real time for rapid, intelligent responses. |
+| **Automated Workflows** | Pipelines streamline VM provisioning, software deployment, and configuration management at scale. |
+| **Full Observability** | Monitoring and dashboards for intrusion detection and log aggregation provide actionable insights across the environment. |
+| **Zero-Trust Security** | Compartmentalized VMs, automated threat response, and SOC integration enforce strict operational security. |
+
 
 ---
 
-## 🧭 Purpose
+## Quick Navigation
 
-The lab is intended to:
+<div align="left">
 
-- Model a compact, enterprise-style network end to end  
-- Provide a controlled environment for:
-  - Firewall policy and access control  
-  - VPN and remote access scenarios  
-  - Segmentation and exposure tests  
-- Capture logs and packet data for:
-  - IDS/IPS analysis and tuning  
-  - Investigating traffic patterns and attack behavior  
-- Practice routine operations:
-  - Backup and restore  
-  - Change management  
-  - Incremental topology changes
+<details open>
+  <summary><strong>Jump to:</strong></summary>
 
-This repository documents:
-
-- The **physical layout** of the rack
-- The **logical design** of networks and zones
-- The **security model** and monitoring approach
-- The **operations model** used to keep the lab coherent over time
-
----
-
-## 🧱 Physical Platform
-
-The environment is built into a rack with structured cabling, patch panels, and out-of-band access.
-
-### Core Hardware Summary
-
-| Category              | Components                                                                                     | Role                                                       |
-|-----------------------|------------------------------------------------------------------------------------------------|------------------------------------------------------------|
-| Compute               | Dell PowerEdge R710 (dual Xeon, 128 GB RAM)                                                   | Primary Proxmox host                                       |
-| Additional Compute    | Dell EqualLogic FS7610 (2 nodes)                                                              | Storage/services appliance; additional compute capability  |
-| Storage               | Avid 18-bay chassis with mixed SAS/SATA disks                                                | Bulk and lab storage                                       |
-| Switching             | Dell X1052P 52-port managed switch                                                            | Core switching and VLAN hub                                |
-| Cabling               | Dual shielded Cat6 patch panels (front + rear)                                               | Cable termination and cross-connect                        |
-| Out-of-band access    | OpenGear CM4148 console manager, rackmount KVM, HP TFT5600 rack console                      | Serial and local VGA/keyboard access                       |
-| Security appliances   | Cisco ASA 5510 / 5515-X, SonicWall SRA 4200                                                   | Perimeter firewalling, zone routing, and VPN               |
-| Monitoring / SOC node | Panasonic Toughbook CF-30 running NST/SELKS with Suricata                                    | Central logging, DPI, and alerting                         |
-
-All devices are cabled through the patch panels into the core switch.  
-Management access is available over:
-
-- A dedicated **management VLAN**
-- **Serial console** via OpenGear CM4148
-- Local **KVM / rack console**
-
----
-
-### Hardware Gallery
-
-> Images are illustrative and correspond to the actual lab hardware.  
-> Click to expand each category.
-
-<details>
-  <summary><strong>Compute</strong> – Proxmox host and EqualLogic nodes</summary>
-
-- Dell PowerEdge R710 – primary Proxmox host  
-  ![](/assets/photos/Compute1.jpg)
-
-- Dell EqualLogic FS7610 (2 nodes) – additional compute and storage  
-  ![](/assets/photos/Compute2.png)
+   [Architecture](Architecture) – Network design, trust zones, and top-level infrastructure  
+   [Hardware](Hardware) – Servers, storage, networking, and SOC devices  
+   [Software Stack](Software%20Stack) – Hypervisors, OS templates, orchestration, and monitoring tools  
+   [Network Topology](Network%20Topology) – VLANs, traffic flows, and dynamic orchestration  
+   [CI/CD & Automation](CI%2FCD%20%26%20Automation) – Pipelines, IaC, and LLM integration  
+   [Monitoring & Telemetry](Monitoring%20%26%20Telemetry) – Metrics, dashboards, and SOC workflow  
+   [Security Model](Security%20Model) – Zero-trust zones, isolation, and automated security policies  
+   [Use Cases](Use%20Cases) – Real-world applications and demonstrations  
+   [Roadmap](Roadmap) – Planned enhancements, expansions, and vision  
+   [Appendix](Appendix) – References, scripts, diagrams, and configuration notes
 
 </details>
 
-<details>
-  <summary><strong>Storage</strong> – Avid chassis and EqualLogic storage</summary>
-
-- Avid 18-bay chassis with mixed SAS/SATA disks  
-  ![18-bay chassis](/assets/photos/Storage1.png)
-
-- EqualLogic-backed storage presented to Proxmox and other services  
-  ![backed storage presented to Proxmox and other services](/assets/photos/Storage2.png)
-
-</details>
-
-<details>
-  <summary><strong>Network & Management</strong> – Switch, patch panels, console access</summary>
-
-- Dell X1052P 52-port managed switch – core switching and VLAN hub  
-  ![core switching and VLAN hub](/assets/photos/switch.jpg)
-
-- Dual shielded Cat6 patch panels (front + rear) – cable termination and cross-connect  
-  ![patch panels](/assets/photos/patch.jpg)
-
-- OpenGear CM4148 console manager – centralized serial access for network and security devices  
-  ![console manager](/assets/photos/console3.jpg)
-
-- Rackmount KVM and HP TFT5600 rack console – local VGA/keyboard access  
-  ![local VGA/keyboard access](/assets/photos/console1.jpg)  
-  ![local VGA/keyboard access](/assets/photos/console2.jpg)
-
-</details>
-
-<details>
-  <summary><strong>Security & Monitoring</strong> – Firewalls, VPN, SOC node</summary>
-
-- Cisco ASA 5510 / 5515-X – perimeter firewalls and zone routing  
-  ![perimeter firewalls and zone routing](/assets/photos/sec1.jpg)  
-  ![perimeter firewalls and zone routing](/assets/photos/sec3.jpg)
-
-- SonicWall SRA 4200 – SSL VPN and remote access gateway  
-  ![SSL VPN and remote access gateway](/assets/photos/sec2.jpg)
-
-- Panasonic Toughbook CF-30 – NST/SELKS and Suricata SOC node  
-  ![NST/SELKS and Suricata as a small SOC node](/assets/photos/monitor1.jpg)  
-  ![NST/SELKS and Suricata as a small SOC node](/assets/photos/monitor2.jpg)
-
-</details>
+</div>
 
 ---
 
-## 🌐 Logical Architecture
+## EvoSec Capabilities
 
-The network is segmented into distinct zones. Each zone maps to one or more VLANs on the Dell X1052P and to specific policies on the ASA.
+EvoSec provides a comprehensive environment for cybersecurity research experimentation and demonstration, from multi-VM experiments and containerized services to hypervisor snapshots for flexible and reproducible lab testing: 
 
-### Zones (Sanitized)
+```mermaid
+graph LR
+    A["EvoSec-Lab Environment"] --> B["Multi-VM Experiments"]
+    A --> C["Containerized Services"]
+    A --> D["Hypervisor Snapshots"]
 
-| Zone        | Role                                              |
-|------------|---------------------------------------------------|
-| Management | Switch, firewalls, console, iDRAC, SOC node       |
-| Core       | Proxmox host(s), storage, shared infrastructure   |
-| DMZ        | Externally reachable lab services                 |
-| Lab        | General-purpose workloads and test VMs            |
-| Honeypots  | Intentionally exposed services for observation    |
-| Guest      | Untrusted devices and temporary clients           |
+    B --> E["Flexible Testing"]
+    C --> E
+    D --> E
 
-The Dell X1052P switch provides **Layer 2 separation** for each VLAN.  
-**Inter-VLAN routing and filtering** are performed on the ASA, not on the switch.
-
----
-
-### Traffic Flows (Conceptual)
-
-| Flow                         | Purpose                                           | Controls                                                |
-|------------------------------|---------------------------------------------------|---------------------------------------------------------|
-| Internet ↔ ASA ↔ DMZ         | Public-facing services and exposure tests        | ASA ACLs, NAT, logging                                  |
-| Internet ↔ ASA/SRA ↔ Mgmt    | Remote administration over VPN                   | VPN profiles, restricted subnets, authentication        |
-| Lab / Guest ↔ ASA ↔ Internet | Outbound access for tools and clients            | Restricted egress rules, logging                        |
-| Honeypots ↔ ASA ↔ Internet   | Inbound scans/attacks to honeypot zone           | Controlled inbound; tightly limited outbound            |
-| Mgmt ↔ Other zones           | Admin access to infrastructure                   | Protocol + host-specific ACLs on ASA                    |
-
-Exact IP addressing and VLAN IDs are documented in sanitized form in:
-
-- `docs/02-network-architecture.md`
-
----
-
-### Addressing Approach (Sanitized)
-
-- Each zone uses a **distinct RFC1918 subnet** (for example, `/24` ranges per zone).
-- The **ASA is the default gateway** for all VLANs.
-- The Dell X1052P operates in **L2 mode only** (no L3 SVIs used for routing).
-- Management IPs for infrastructure (switch, firewalls, iDRAC, console, SOC node) live exclusively in the **Management subnet**.
-- Public address examples and NAT mappings use **documentation ranges** only (e.g., `198.51.100.0/24`, `203.0.113.0/24`).
-
----
-
-## 🔒 Security & Monitoring
-
-Security and observability are part of the base design, not an afterthought.
-
-### Perimeter & Segmentation
-
-**Cisco ASA appliances:**
-
-- Define interface roles:
-  - `outside`, `management`, `core`, `dmz`, `lab`, `honeypots`, `guest`
-- Apply NAT rules:
-  - Public-facing services in the DMZ
-  - Outbound access from lab, guest, and honeypot zones
-- Enforce ACLs that:
-  - Explicitly permit required inter-zone traffic
-  - Deny and log everything else by default
-
-**SonicWall SRA 4200:**
-
-- Terminates remote VPN sessions
-- Exposes only:
-  - Selected management subnets
-  - Optional lab subnets for remote work
-- Uses authentication and restricted routing to avoid broad access
-
-Administrative interfaces for core infrastructure devices are reachable **only** from the management zone.
-
----
-
-### Logging, DPI, and SOC Node
-
-The Toughbook CF-30, running NST/SELKS (including Suricata), acts as a compact SOC node.
-
-It:
-
-- Receives:
-  - Syslog from ASA and SonicWall
-  - Logs from selected hosts and core services
-  - Mirrored traffic from key switch ports and/or ASA interfaces
-- Provides:
-  - Deep packet inspection with Suricata
-  - Dashboards and alert views through the SELKS stack
-
-Monitoring design focuses on a limited set of well-chosen mirror points:
-
-- Example: DMZ ↔ Internet, Honeypots ↔ Internet  
-- Goal: capture **high-value** traffic paths rather than all traffic
-
-Additional detail is documented in:
-
-- `docs/03-security-architecture.md`
-
----
-
-## 📁 Repository Layout
-
-The repository mirrors the structure of the lab and its documentation.
-
-```text
-digital--lab/
-├── README.md
-├── docs/
-│   ├── 00_overview.md
-│   ├── 01_hardware-inventory.md
-│   ├── 02-network-architecture.md
-│   ├── 03-security-architecture.md
-│   ├── 04-services-and-vms.md
-│   ├── 05-operations-and-maintenance.md
-│   └── 06-future-roadmap.md
-├── diagrams/
-│   └── logical-network-diagram.png
-├── infra/
-│   ├── example-firewall-policies/
-│   │   └── asa-lab-base-policy.txt
-│   ├── sample-ansible-playbooks/
-│   └── scripts/
-├── runbooks/
-│   └── change-log.md
-└── assets/
-    └── photos/
+    E --> F["Reproducible Results"]
 ```
+The platform integrates honeypots, tar pits, and IDS/IPS systems to enable controlled analysis of attacker behavior and threat research, while dynamic network orchestration allows subsecond-scale VLAN reconfigurations and automated containment, simulating complex operational scenarios. 
 
-### How to Navigate
-
-- Start with: `docs/00_overview.md` – narrative overview of the lab
-- Then: `docs/02-network-architecture.md` – network layout, VLANs, and flows
-- And: `docs/03-security-architecture.md` – security model and monitoring
-
-### Automation & Config Artifacts
-
-The `infra/` directory collects examples of how the environment is configured and automated conceptually:
-
-- `example-firewall-policies/asa-lab-base-policy.txt` – base ASA policy structure for the lab environment.
-- `sample-ansible-playbooks/` – conceptual Ansible examples for provisioning and configuration.
-- `scripts/` – utility scripts for recurring tasks and experiments.
-
-These artifacts are intentionally generic and sanitized, but they illustrate the structure and approach used to manage the environment.
+AI-driven automation, Infrastructure-as-Code provisioning, and pipelines ensure seamless, scalable operations, while real-time dashboards, logging, and alerts provide complete observability and actionable insights. Designed with reproducibility and demonstration in mind, EvoSec-Lab serves as a professional and educational showcase of enterprise lab practices and research-grade workflows.
 
 ---
 
-## 🎯 Relevance to Roles
+## Security First
+```mermaid
+graph TD
+    Core[Zero-Trust Core] --> VLAN[Segmented VLANs]
+    Core --> AI[AI Threat Detection]
+    Core --> SOC[SOC Monitoring]
+    Core --> Isolation[Traffic Isolation]
 
-This project is designed to be more than a homelab showcase; it is a portfolio artifact that overlaps with several role types.
-
-### Security / Network / Infrastructure Engineering
-
-- Demonstrates hands-on experience with:
-  - Firewalling (Cisco ASA), VPNs (SonicWall SRA), and segmented network design.
-  - Building and operating a multi-VLAN, multi-zone environment with clear trust boundaries.
-  - Centralized logging, IDS/IPS, and practical trade-offs around monitoring coverage.
-
-### DevOps / Platform / SRE
-
-- Shows:
-  - A focus on reproducibility and documentation over ad-hoc configuration.
-  - A foundation for infrastructure-as-code and automated provisioning (e.g., Ansible samples, structured configs).
-  - A realistic lab for failure testing, exposure tests, and topology changes before applying similar ideas in production.
-
-### Data / Analytics / Project Controls (Technical Focus)
-
-- Highlights:
-  - Systems thinking and comfort with complex technical environments.
-  - A disciplined approach to change management, observability, and root-cause investigation.
-  - The ability to translate messy infrastructure into structured documentation and repeatable processes.
+    VLAN --> Outcome[Secure & Resilient Lab]
+    AI --> Outcome
+    SOC --> Outcome
+    Isolation --> Outcome
+```
+EvoSec is built around a multi-layered zero-trust security model, combining segmented VLANs, AI-driven threat detection, and SOC-integrated monitoring. Suspicious activity is automatically contained, and dynamic traffic isolation ensures the environment remains secure and resilient. This approach enables advanced experimentation without compromising operational safety.
 
 ---
 
-## ⚙️ Operations
+## AI-Driven Automation, Observability & Telemetry
 
-The lab is operated with the expectation that it will evolve and occasionally be rebuilt.
+EvoSec is a smart lab orchestration platform that leverages AI, machine learning, and DevOps to automate, optimize, and secure research environments. It continuously monitors system status and network traffic, providing real-time optimization, intelligent threat detection, and automated responses.
+Core capabilities include dynamic network configuration, adaptive honeypot-based deception, and event-driven anomaly detection, enabling researchers to study threats while maintaining integrity. 
 
-- **Backups**
-  - Device configurations and Proxmox VM backups are taken regularly (stored outside this repository).
-  - Backup and restore procedures are tracked under `docs/05-operations-and-maintenance.md`.
+QubesOS is utilized for secure, compartmentalized experimentation and SaltStack for advanced configuration management and automated provisioning.
+Supporting automated deployment, updates, scaling, adaptive experiments, and predictive maintenance, the system enhances control and efficiency while AI automation ensures secure, responsive, and adaptable lab infrastructure.
 
-- **Change Tracking**
-  - Topology and policy changes are reflected in the relevant `docs/` files.
-  - Each significant change is summarized in `runbooks/change-log.md`.
+The system delivers granular observability across infrastructure, apps, and network by collecting metrics such as CPU, memory, storage I/O, and network traffic deep packet inspection for detailed analysis and interpretation. 
 
-- **Experiments**
-  - New services, exposure tests, or honeypot configurations are:
-    - Introduced in the lab
-    - Documented so the logical design stays aligned with reality
+<img width="725" height="543" alt="NSTscreen013" src="https://github.com/user-attachments/assets/004b0f48-6c84-426e-a043-5aa7d94da18f" />
 
-The goal is for the lab to remain understandable and reproducible rather than drifting into an ad-hoc configuration.
+The ELK stack provides central logging for real-time event tracking and anomaly detection, while Grafana dashboards visualize system and security status.
+SOC integration enables continuous monitoring, advanced threat detection, and prompt response to abnormal activities. 
+By bringing together data from multiple sources, EvoSec turns raw information into actionable insights, improving operational efficiency and maintaining strong security.
 
----
+![Untitled](https://github.com/user-attachments/assets/11ca33e1-3acc-4314-af37-2aa7e385bd2c)
 
-## 👤 My Role in This Project
-
-This lab is a **solo-built** environment:
-
-- I sourced, racked, and cabled the hardware.
-- I designed the network, security zones, and addressing scheme.
-- I configured the hypervisor, firewalls, VPNs, monitoring stack, and management access.
-- I wrote the documentation, diagrams, and operational runbooks in this repository.
-
-The intent is to reflect how I approach real-world environments: start from clear boundaries and objectives, build for observability and safety, and document so others can understand, operate, and extend the system.
 
 ---
 
-## 🧼 Sanitization & Scope
+##  Why EvoSec?
 
-All content in this repository is intentionally sanitized:
+<div align="left">
 
-- IP ranges, hostnames, and network object names are **examples**, not live values.
-- No keys, credentials, VPN profiles, or other secrets are committed.
-- Hardware identifiers such as serial numbers and MAC addresses are omitted.
-- Configuration examples (such as `asa-lab-base-policy.txt`) are **structural** only and cannot be applied 1:1 to any real environment.
+![test2](https://github.com/user-attachments/assets/7388aa89-6603-4772-b960-438a4a78339b)
 
-The lab is isolated from any production or customer systems.  
-Honeypot and exposure testing is confined to this environment and configured to avoid unintended impact on external networks.
+EvoSec combines enterprise-grade infrastructure, AI-driven automation, and security making it ideal for professional research and educational use.
+
+</div>
+
