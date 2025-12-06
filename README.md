@@ -37,7 +37,7 @@ Visit the wiki for a detailed overview of EvoSec’s architecture, components, a
 <div align="left">
 
 <details open>
-  <summary><strong>📚 EvoSec-Lab Wiki Table of Contents</strong></summary>
+  <summary><strong>EvoSec-Lab Wiki Table of Contents</strong></summary>
 
 - [01 – Architecture](https://github.com/FlorianStuettgen/EvoSec/wiki/01-%E2%80%90-Architecture)
 - [02 – Hardware](https://github.com/FlorianStuettgen/EvoSec/wiki/02-%E2%80%90-Hardware)
