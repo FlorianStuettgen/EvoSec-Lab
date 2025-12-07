@@ -1,4 +1,4 @@
-<div align="center">
+<img width="2268" height="2484" alt="20240729_100516" src="https://github.com/user-attachments/assets/8666edf4-1f3d-48fa-8096-b5f8009467e5" /><div align="center">
 
 <img width="452" height="170" alt="ChatGPT Image Dec 5, 2025, 05_22_47 PM" src="https://github.com/user-attachments/assets/c35d9192-3736-40ba-9d59-d2660507c0c2" />
  
@@ -127,6 +127,12 @@ By bringing together data from multiple sources, EvoSec turns raw information in
 ![test2](https://github.com/user-attachments/assets/7388aa89-6603-4772-b960-438a4a78339b)
 
 EvoSec combines enterprise-grade infrastructure, AI-driven automation, and security making it ideal for professional research and education.
+
+As of December 2025, this build is operational!
+
+
+
+
 
 </div>
 
