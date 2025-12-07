@@ -123,7 +123,7 @@ By bringing together data from multiple sources, EvoSec turns raw information in
 
 ## Why EvoSec?
 
-EvoSec combines enterprise-grade infrastructure, AI-automation & security, making it ideal for professional research and education.
+EvoSec combines enterprise-grade infrastructure, AI-automation & security for professional research and education.
 
 As of December 2025, EvoSec is now fully operational!
 
