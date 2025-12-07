@@ -1,6 +1,6 @@
 # 04 – Network Topology
 
-EvoSec uses a multi-zone, segmented network topology to isolate different parts of the lab and control traffic flow.  
+SOC_Replay uses a multi-zone, segmented network topology to isolate different parts of the lab and control traffic flow.  
 
 ## Zones / VLANs
 
